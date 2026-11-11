@@ -5,13 +5,13 @@ Purpose
 
 What to run (quick)
 - Backend (C#/.NET): from repository root run `dotnet build` and `dotnet test` (if tests exist).
-- Run dev server: `dotnet run --project DeltaCprBe`.
+- Run dev server: `dotnet run --project Be`.
 
 Key locations
-- Backend project root: DeltaCprBe/
-- Solution: DeltaCprBe.slnx
-- Controllers: DeltaCprBe/Controllers/
-- Configuration: DeltaCprBe/appsettings.json
+- Backend project root: Be/
+- Solution: Be.slnx
+- Controllers: Be/Controllers/
+- Configuration: Be/appsettings.json
 
 Conventions and notes for agents
 - Target framework: net10.0 (latest .NET SDK installed).
@@ -23,7 +23,7 @@ Common pitfalls
 
 What agents should do first
 1. Run `dotnet build` to validate backend changes.
-2. Run the app with `dotnet run --project DeltaCprBe` for manual checks.
+2. Run the app with `dotnet run --project Be` for manual checks.
 
 When to ask the user
 - If you need credentials, secrets, or service account tokens — stop and ask; do not attempt to fetch secrets.

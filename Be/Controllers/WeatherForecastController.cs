@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace DeltaCprBe.Controllers;
+namespace Be.Controllers;
 
 [ApiController]
 [Route("[controller]")]

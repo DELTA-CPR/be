@@ -1,4 +1,4 @@
-namespace DeltaCprBe;
+namespace Be;
 
 public class WeatherForecast
 {
