@@ -1,0 +1,6 @@
+@DeltaCprBe_HostAddress = http://localhost:5165
+
+GET {{DeltaCprBe_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
