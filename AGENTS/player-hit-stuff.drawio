@@ -1,0 +1,162 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="Page-1" id="zMAuYNl7rgJw2M2AIJkr">
+    <mxGraphModel dx="2626" dy="2072" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="Kis2A4pWH7n1rxSiHE4b-55" edge="1" parent="1" source="Kis2A4pWH7n1rxSiHE4b-7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;" target="Kis2A4pWH7n1rxSiHE4b-15">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Kis2A4pWH7n1rxSiHE4b-7" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Detect ARUCO codes in frame from camera" vertex="1">
+          <mxGeometry height="60" width="160" x="260" y="180" as="geometry" />
+        </mxCell>
+        <mxCell id="Kis2A4pWH7n1rxSiHE4b-86" edge="1" parent="1" source="Kis2A4pWH7n1rxSiHE4b-11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;" target="Kis2A4pWH7n1rxSiHE4b-52">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Kis2A4pWH7n1rxSiHE4b-11" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Pull table of aruco id &amp;lt;=&amp;gt; team / player name mappings from server at game start" vertex="1">
+          <mxGeometry height="60" width="320" x="180" y="-30" as="geometry" />
+        </mxCell>
+        <mxCell id="Kis2A4pWH7n1rxSiHE4b-16" edge="1" parent="1" source="Kis2A4pWH7n1rxSiHE4b-12" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;dashed=1;" target="Kis2A4pWH7n1rxSiHE4b-15">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Kis2A4pWH7n1rxSiHE4b-12" parent="1" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;" value="" vertex="1">
+          <mxGeometry height="80" width="60" x="-10" y="260" as="geometry" />
+        </mxCell>
+        <mxCell id="Kis2A4pWH7n1rxSiHE4b-58" edge="1" parent="1" source="Kis2A4pWH7n1rxSiHE4b-15" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;" target="Kis2A4pWH7n1rxSiHE4b-53">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Kis2A4pWH7n1rxSiHE4b-15" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Match detected aruco ids against team mappings" vertex="1">
+          <mxGeometry height="60" width="120" x="280" y="270" as="geometry" />
+        </mxCell>
+        <mxCell id="Kis2A4pWH7n1rxSiHE4b-47" edge="1" parent="1" source="Kis2A4pWH7n1rxSiHE4b-23" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;" target="Kis2A4pWH7n1rxSiHE4b-25">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Kis2A4pWH7n1rxSiHE4b-23" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Hit enemy player(s) tied to the bounding box" vertex="1">
+          <mxGeometry height="40" width="145" x="525" y="740" as="geometry" />
+        </mxCell>
+        <mxCell id="Kis2A4pWH7n1rxSiHE4b-65" edge="1" parent="1" source="Kis2A4pWH7n1rxSiHE4b-25" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;" target="Kis2A4pWH7n1rxSiHE4b-43">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Kis2A4pWH7n1rxSiHE4b-69" edge="1" parent="1" source="Kis2A4pWH7n1rxSiHE4b-25" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;" target="Kis2A4pWH7n1rxSiHE4b-68">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Kis2A4pWH7n1rxSiHE4b-25" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Send &quot;Hit player XYZ&quot; to server" vertex="1">
+          <mxGeometry height="50" width="190" x="502.5" y="820" as="geometry" />
+        </mxCell>
+        <mxCell id="Kis2A4pWH7n1rxSiHE4b-42" edge="1" parent="1" source="Kis2A4pWH7n1rxSiHE4b-34" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;" target="Kis2A4pWH7n1rxSiHE4b-36">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Kis2A4pWH7n1rxSiHE4b-34" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;div&gt;Draw some UI around the detection???&lt;/div&gt;&lt;div&gt;(like red/green team label and player name)&lt;/div&gt;" vertex="1">
+          <mxGeometry height="60" width="290" x="195" y="450" as="geometry" />
+        </mxCell>
+        <mxCell id="Kis2A4pWH7n1rxSiHE4b-39" edge="1" parent="1" source="Kis2A4pWH7n1rxSiHE4b-36" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;" target="Kis2A4pWH7n1rxSiHE4b-37">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Kis2A4pWH7n1rxSiHE4b-40" connectable="0" parent="Kis2A4pWH7n1rxSiHE4b-39" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];inheritText=1;defaultLabelBackgroundColor=page;" value="Yes" vertex="1">
+          <mxGeometry relative="1" x="-0.2923" y="3" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Kis2A4pWH7n1rxSiHE4b-44" edge="1" parent="1" source="Kis2A4pWH7n1rxSiHE4b-36" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;" target="Kis2A4pWH7n1rxSiHE4b-43">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Kis2A4pWH7n1rxSiHE4b-36" parent="1" style="rhombus;whiteSpace=wrap;html=1;shapeInside=1;" value="Is crosshair inside bounding box&amp;nbsp;and &quot;Fire&quot; pressed in the past n miliseconds" vertex="1">
+          <mxGeometry height="157.5" width="170" x="255" y="550" as="geometry" />
+        </mxCell>
+        <mxCell id="Kis2A4pWH7n1rxSiHE4b-41" edge="1" parent="1" source="Kis2A4pWH7n1rxSiHE4b-37" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;" target="Kis2A4pWH7n1rxSiHE4b-23">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Kis2A4pWH7n1rxSiHE4b-45" edge="1" parent="1" source="Kis2A4pWH7n1rxSiHE4b-37" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;" target="Kis2A4pWH7n1rxSiHE4b-43">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Kis2A4pWH7n1rxSiHE4b-37" parent="1" style="rhombus;whiteSpace=wrap;html=1;shapeInside=1;" value="is Enemy bounding box" vertex="1">
+          <mxGeometry height="100" width="130" x="390" y="670" as="geometry" />
+        </mxCell>
+        <mxCell id="Kis2A4pWH7n1rxSiHE4b-66" edge="1" parent="1" source="Kis2A4pWH7n1rxSiHE4b-43" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;" target="Kis2A4pWH7n1rxSiHE4b-52">
+          <mxGeometry relative="1" x="0.0012" as="geometry">
+            <Array as="points">
+              <mxPoint x="130" y="720" />
+              <mxPoint x="130" y="110" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Kis2A4pWH7n1rxSiHE4b-67" connectable="0" parent="Kis2A4pWH7n1rxSiHE4b-66" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];inheritText=1;defaultLabelBackgroundColor=page;" value="&lt;div&gt;Repeat while game running&lt;/div&gt;" vertex="1">
+          <mxGeometry relative="1" x="0.7693" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Kis2A4pWH7n1rxSiHE4b-43" parent="1" style="ellipse;whiteSpace=wrap;html=1;shapeInside=1;aspect=fixed;" value="" vertex="1">
+          <mxGeometry height="25" width="25" x="210" y="707.5" as="geometry" />
+        </mxCell>
+        <mxCell id="Kis2A4pWH7n1rxSiHE4b-54" edge="1" parent="1" source="Kis2A4pWH7n1rxSiHE4b-52" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;" target="Kis2A4pWH7n1rxSiHE4b-7">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Kis2A4pWH7n1rxSiHE4b-52" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="YOLO model detecting Person bounding boxes from camera" vertex="1">
+          <mxGeometry height="60" width="170" x="255" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="Kis2A4pWH7n1rxSiHE4b-59" edge="1" parent="1" source="Kis2A4pWH7n1rxSiHE4b-53" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;" target="Kis2A4pWH7n1rxSiHE4b-34">
+          <mxGeometry relative="1" x="-0.3333" as="geometry">
+            <mxPoint x="340" y="440" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Kis2A4pWH7n1rxSiHE4b-53" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Assign team/player data to bounding boxes based on areas overlapping" vertex="1">
+          <mxGeometry height="60" width="170" x="255" y="350" as="geometry" />
+        </mxCell>
+        <mxCell id="Kis2A4pWH7n1rxSiHE4b-64" parent="1" style="shape=callout;whiteSpace=wrap;html=1;perimeter=calloutPerimeter;position2=0.31;" value="Assume bounding box can contain multiple players" vertex="1">
+          <mxGeometry height="80" width="160" x="450" y="300" as="geometry" />
+        </mxCell>
+        <mxCell id="Kis2A4pWH7n1rxSiHE4b-72" parent="1" style="swimlane;whiteSpace=wrap;html=1;" value="&lt;div&gt;Server&lt;/div&gt;" vertex="1">
+          <mxGeometry height="390" width="330" x="860" y="380" as="geometry" />
+        </mxCell>
+        <mxCell id="Kis2A4pWH7n1rxSiHE4b-101" edge="1" parent="Kis2A4pWH7n1rxSiHE4b-72" source="Kis2A4pWH7n1rxSiHE4b-68" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;" target="Kis2A4pWH7n1rxSiHE4b-100">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Kis2A4pWH7n1rxSiHE4b-68" parent="Kis2A4pWH7n1rxSiHE4b-72" style="rounded=0;whiteSpace=wrap;html=1;" value="SignalR message" vertex="1">
+          <mxGeometry height="60" width="100" x="-40" y="32.5" as="geometry" />
+        </mxCell>
+        <mxCell id="Kis2A4pWH7n1rxSiHE4b-76" edge="1" parent="Kis2A4pWH7n1rxSiHE4b-72" source="Kis2A4pWH7n1rxSiHE4b-73" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;" target="Kis2A4pWH7n1rxSiHE4b-75">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Kis2A4pWH7n1rxSiHE4b-73" parent="Kis2A4pWH7n1rxSiHE4b-72" style="rounded=0;whiteSpace=wrap;html=1;" value="Mark player as hit in db" vertex="1">
+          <mxGeometry height="40" width="170" x="100" y="115" as="geometry" />
+        </mxCell>
+        <mxCell id="Kis2A4pWH7n1rxSiHE4b-80" edge="1" parent="Kis2A4pWH7n1rxSiHE4b-72" source="Kis2A4pWH7n1rxSiHE4b-75" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;" target="Kis2A4pWH7n1rxSiHE4b-77">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Kis2A4pWH7n1rxSiHE4b-75" parent="Kis2A4pWH7n1rxSiHE4b-72" style="rounded=0;whiteSpace=wrap;html=1;" value="Start respawn timer, ignore any hit messages from hit players until timer ends (store respawn timestamp in db)" vertex="1">
+          <mxGeometry height="50" width="210" x="80" y="172.5" as="geometry" />
+        </mxCell>
+        <mxCell id="Kis2A4pWH7n1rxSiHE4b-79" edge="1" parent="Kis2A4pWH7n1rxSiHE4b-72" source="Kis2A4pWH7n1rxSiHE4b-77" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;" target="Kis2A4pWH7n1rxSiHE4b-78">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Kis2A4pWH7n1rxSiHE4b-83" edge="1" parent="Kis2A4pWH7n1rxSiHE4b-72" source="Kis2A4pWH7n1rxSiHE4b-77" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;" target="Kis2A4pWH7n1rxSiHE4b-82">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Kis2A4pWH7n1rxSiHE4b-77" parent="Kis2A4pWH7n1rxSiHE4b-72" style="rounded=0;whiteSpace=wrap;html=1;" value="Notify hit user with timestamp of respawning" vertex="1">
+          <mxGeometry height="40" width="170" x="100" y="250.5" as="geometry" />
+        </mxCell>
+        <mxCell id="Kis2A4pWH7n1rxSiHE4b-78" parent="Kis2A4pWH7n1rxSiHE4b-72" style="rounded=0;whiteSpace=wrap;html=1;" value="SignalR message to hit client" vertex="1">
+          <mxGeometry height="60" width="100" x="290" y="240.5" as="geometry" />
+        </mxCell>
+        <mxCell id="Kis2A4pWH7n1rxSiHE4b-82" parent="Kis2A4pWH7n1rxSiHE4b-72" style="rounded=0;whiteSpace=wrap;html=1;" value="(??? notify other users for some leaderboard ???)" vertex="1">
+          <mxGeometry height="40" width="170" x="100" y="318.5" as="geometry" />
+        </mxCell>
+        <mxCell id="Kis2A4pWH7n1rxSiHE4b-102" edge="1" parent="Kis2A4pWH7n1rxSiHE4b-72" source="Kis2A4pWH7n1rxSiHE4b-100" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;" target="Kis2A4pWH7n1rxSiHE4b-73">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Kis2A4pWH7n1rxSiHE4b-100" parent="Kis2A4pWH7n1rxSiHE4b-72" style="rounded=0;whiteSpace=wrap;html=1;" value="&lt;div&gt;Check if both players are alive&lt;/div&gt;(firing player and hit player)" vertex="1">
+          <mxGeometry height="50" width="170" x="100" y="37.5" as="geometry" />
+        </mxCell>
+        <mxCell id="Kis2A4pWH7n1rxSiHE4b-87" edge="1" parent="1" source="Kis2A4pWH7n1rxSiHE4b-84" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;" target="Kis2A4pWH7n1rxSiHE4b-11">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Kis2A4pWH7n1rxSiHE4b-84" parent="1" style="ellipse;whiteSpace=wrap;html=1;shapeInside=1;" value="Start" vertex="1">
+          <mxGeometry height="40" width="100" x="290" y="-100" as="geometry" />
+        </mxCell>
+        <mxCell id="Kis2A4pWH7n1rxSiHE4b-85" edge="1" parent="1" source="Kis2A4pWH7n1rxSiHE4b-11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;defaultLabelBackgroundColor=page;dashed=1;" target="Kis2A4pWH7n1rxSiHE4b-12">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
