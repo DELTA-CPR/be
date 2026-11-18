@@ -1,65 +1,64 @@
-# AGENTS.md
+# Backend API - AGENTS.md
 
-<!--
-Adapted for a stock `dotnet new webapi` backend. HTML comments name the source of each
-section and can be deleted. Wording is original; only the ideas are taken from sources.
+## Context & Environment
+- **Path**: `be/`
+- **Framework**: ASP.NET Core Web API on **.NET 10** (`net10.0`)
+- **Solution File**: `Be.slnx` (Project: `Be/Be.csproj`)
+- **API Style**: Controller-based (`Controllers/`, `[ApiController]`, inheriting `ControllerBase`)
+- **Documentation**: ASP.NET OpenAPI (`Microsoft.AspNetCore.OpenApi`)
+- **Settings**: `appsettings.json`, `appsettings.Development.json`
 
-Structure follows the .NET team's own guidance on lean instruction files. The community C#/REST
-instruction files are written as tutorial prompts ("guide the user..."), so only their concrete
-rules are reused here.
+All commands below must be executed from the `be/` directory.
 
-Source keys (all read 2026-11-11):
-  [HYG]  devblogs.microsoft.com/dotnet/instructions-hygiene-what-frontier-models-still-need-you-to-say/   (.NET Blog, 2026-08-12)
-  [CS]   github/awesome-copilot   instructions/csharp.instructions.md
-  [REST] github/awesome-copilot   instructions/aspnet-rest-apis.instructions.md
-  [SKILLS] dotnet/skills          README.md and plugins/dotnet-test
-  [SPEC] agentsmd/agents.md       format guidance
-  Anything tagged "unsourced" is my own addition (standard CLI / template facts).
-  Commands were NOT executed while writing this; run each once before trusting it ([HYG] warns against unvalidated commands).
--->
+---
 
-## Project context
-<!-- src: [HYG] "non-obvious facts" and "source of truth" sections; [SPEC] "project overview". Template layout: unsourced. -->
-- ASP.NET Core Web API created with `dotnet new webapi`. Endpoint wiring and middleware live in `Program.cs`; settings in `appsettings.json` and `appsettings.Development.json`.
-- Target framework: read the `.csproj` (or `global.json` if the repo has one). Do not change it unless asked.
+## Verification & Workflow Commands
+```bash
+# Build the solution (Mandatory verification gate before finishing tasks)
+dotnet build Be.slnx
 
-## Commands
-<!-- src: restore / build --no-restore / test / format --verify-no-changes: [HYG]; container publish: [CS] "Deployment and DevOps".
-     Unsourced: `dotnet run`. -->
-- `dotnet restore`
-- `dotnet build --no-restore`
-- `dotnet run` (add `--project <path>` when run from a solution root)
-- `dotnet test` (once a test project exists)
-- `dotnet format --verify-no-changes` before finishing; `.editorconfig` and analyzers are the style authority, don't override them
-- Container image: `dotnet publish --os linux --arch x64 -p:PublishProfile=DefaultContainer`
+# Run automated tests (when test project exists)
+dotnet test
 
-## Conventions
-<!-- src: C# rules: [CS] "C# Instructions", "Naming Conventions", "Formatting", "Nullable Reference Types".
-     Endpoint-style and dependency rules: [HYG] "Choices the codebase cannot settle". The stock template defaulting to Minimal APIs: unsourced. -->
-- Match the existing endpoint style. The stock template uses Minimal APIs; don't add controllers alongside unless asked.
-- C#: file-scoped namespaces, pattern matching and switch expressions, `nameof` instead of string literals, `is null` / `is not null`.
-- Nullable reference types are on: trust the annotations, check for null only at entry points.
-- Naming: PascalCase for types, methods and public members; camelCase for private fields and locals; `I` prefix on interfaces.
-- XML doc comments on public APIs.
-- Use existing abstractions; ask before adding a NuGet package.
+# Format code according to .editorconfig and dotnet standards
+dotnet format
 
-## API behavior
-<!-- src: ProblemDetails (RFC 9457), global exception handling, OpenAPI docs, versioning: [REST] "Validation and Error Handling",
-     "API Versioning and Documentation". Status-code mapping: [HYG] example. Validation-library narrowing: mine ([REST] lists data annotations and FluentValidation). -->
-- Return errors as RFC 9457 `ProblemDetails`; handle unexpected exceptions in one global handler, not per endpoint.
-- Map validation failures to 400, missing resources to 404, conflicts to 409.
-- Validate request models with built-in data annotations; ask before adding FluentValidation.
-- Keep OpenAPI metadata (parameters, responses) current for every endpoint you add or change.
-- Don't break public contracts; version deliberately.
+# Run local development API
+dotnet run --project Be/Be.csproj
+```
 
-## Testing
-<!-- src: test-project wiring and framework list: [SKILLS] plugins/dotnet-test; style rules: [CS] "Testing". -->
-- `dotnet new webapi` creates no test project. Before adding one, ask which framework to use (MSTest, xUnit, NUnit or TUnit); the dotnet-test plugin in dotnet/skills has a scaffold skill for the wiring.
-- Cover critical paths; copy naming and casing from nearby tests; no Arrange/Act/Assert comments.
+---
 
-## Hard constraints
-<!-- src: [HYG] "Hard constraints" examples, adopted as sensible defaults; adjust to your project. EF Core/migrations context: [REST] "Data Access Patterns".
-     user-secrets line: unsourced. -->
-- Never log secrets, tokens or customer payloads. Keep local secrets in `dotnet user-secrets`, not in `appsettings*.json`.
-- Preserve public JSON contracts unless the task explicitly calls for a breaking change.
-- If EF Core is added later: migrations must stay compatible with the previously deployed version.
+## High-Impact Architecture & Coding Rules
+
+### 1. Controller Design & REST Conventions
+- **Controller-Based Architecture**: Follow the established pattern in `Be/Controllers/`. Use `[ApiController]`, inherit from `ControllerBase`, and use route attributes like `[Route("api/[controller]")]` or explicit RESTful path segments.
+- **DTO Isolation**: Never bind or return database entities or internal domain models directly across controller endpoints. Always define explicit, strongly-typed Request and Response DTOs.
+- **Action Return Types**: Use `ActionResult<T>` or `IActionResult`. Return semantic HTTP status codes (`Ok(result)`, `CreatedAtAction(...)`, `NoContent()`, `NotFound(...)`, `BadRequest(...)`).
+- **OpenAPI Synchronization**: Keep endpoint documentation up to date using XML doc comments, `[ProducesResponseType]`, and OpenAPI attributes for all expected response codes.
+
+### 2. Asynchronous Integrity (Zero Thread-Pool Starvation)
+- **Async All the Way**: All I/O, database, and network operations must be non-blocking (`async Task<ActionResult<T>>`).
+- **Cancellation Tokens**: Always accept `CancellationToken cancellationToken = default` in controller actions and forward it down to all async calls (`DbContext`, `HttpClient`, streams, etc.).
+- **No Blocking Sync Calls**: Never use `.Result`, `.Wait()`, or `.GetAwaiter().GetResult()`. This causes severe thread-pool exhaustion and deadlocks under load.
+
+### 3. Dependency Injection & Service Lifetimes
+- **Constructor Injection**: Inject dependencies via primary constructors or explicit constructor parameters. Never resolve dependencies via `IServiceProvider` (Service Locator anti-pattern).
+- **Lifetime Correctness**:
+  - `AddScoped`: For per-request state and data contexts (e.g. database contexts, unit of work, user context).
+  - `AddTransient`: For lightweight, stateless operations.
+  - `AddSingleton`: Only for thread-safe caches, single-instance background workers, or read-only services.
+
+### 4. Error Handling & RFC 9457 ProblemDetails
+- **Standardized Error Format**: Return client-facing errors using RFC 9457 `ProblemDetails`.
+- **Global Exception Handling**: Do not wrap every controller action in boilerplate `try-catch` blocks. Rely on global exception handling middleware in `Program.cs` for unhandled exceptions.
+- **Status Code Mapping**:
+  - Validation failures -> 400 Bad Request
+  - Resource not found -> 404 Not Found
+  - Unauthorized/Forbidden -> 401 / 403
+  - Concurrency/State conflict -> 409 Conflict
+
+### 5. Configuration & Secrets Hygiene
+- **Strongly Typed Options**: Bind configuration sections in `appsettings.json` to strongly typed classes via `IOptions<TOptions>` or `IOptionsSnapshot<TOptions>`.
+- **Zero Secrets in Git**: Never place connection strings, JWT keys, or API tokens in `appsettings*.json`. Use `dotnet user-secrets` for local development and environment variables for deployment.
+- **Safe Logging**: Never log PII, authorization tokens, or sensitive payloads into logging providers.
