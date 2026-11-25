@@ -627,7 +627,7 @@ If physical spawn point verification is required, the application must additiona
 
 ## 11. Multiplayer Synchronization
 
-SignalR is used for real-time communication between the backend and connected mobile applications.
+REST handles session creation, joining by code or QR, and exchanging a scanned player marker for a session credential. After authentication, the app uses SignalR for lobby administration, match commands, notifications and reconnect snapshots. The [REST and SignalR API specification](SignalR_API_Spec.md) defines the routes, hub methods and callbacks.
 
 The backend distributes important game events to the relevant clients.
 
@@ -722,7 +722,8 @@ The backend is the authoritative source of game configuration.
 | ArUco detection | OpenCV ArUco |
 | Person detection | YOLO |
 | Backend | ASP.NET Core |
-| Multiplayer communication | SignalR |
+| Session bootstrap | REST |
+| Connected lobby and match | SignalR |
 | Database | PostgreSQL |
 
 ### 14.1 Client-side camera processing

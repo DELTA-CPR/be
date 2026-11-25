@@ -1,9 +1,16 @@
-# Game of Tag – SignalR API Specification
+# Game of Tag – REST and SignalR API Specification
 ## 1. Scope and conventions
 
-This document defines the real-time API between the Unity mobile client and the ASP.NET Core backend. It covers connection and authentication, hub methods (client → server), client callbacks (server → client), data contracts, validation rules, error handling, reconnection and scaling.
+This document defines the session API between the mobile client and the ASP.NET Core backend. It covers connection and authentication, hub methods (client → server), client callbacks (server → client), data contracts, validation rules, error handling, reconnection and scaling.
 
-Session creation and joining by QR code are assumed to be plain REST endpoints (Section 3.1) because they happen before a SignalR connection exists. Everything that happens during a game goes through SignalR.
+REST establishes session identity. SignalR owns the connected lobby and match, including their initial reads and recovery after a disconnect. Each operation has one transport.
+
+| When | Transport | Operations |
+| --- | --- | --- |
+| Before connecting | REST | Create a session, join by code or QR, link a device and obtain its player credential |
+| In the lobby | SignalR | Register and manage players and spawn points, change configuration, start the match and receive changes |
+| During a match | SignalR | Submit gameplay commands, end the match and receive private, team or session events |
+| On connection or reconnect | SignalR | Read the current snapshot and fetch the marker mapping if the cached version is missing or stale |
 
 **Conventions**
 
@@ -23,7 +30,7 @@ Session creation and joining by QR code are assumed to be plain REST endpoints (
 | --- | --- |
 | `admin` | Creates and manages the session. Also a normal player. |
 | `player` | Registered participant linked to a device. |
-| `pending` | Joined the session, but not yet linked to a registered player (before device linking, Section 5.2). |
+| `pending` | Joined the session, but not yet linked to a registered player (before device linking, Section 3.1). |
 
 Admin-only hub methods return `FORBIDDEN` for other roles.
 
@@ -36,7 +43,30 @@ Admin-only hub methods return `FORBIDDEN` for other roles.
 | Endpoint | Purpose |
 | --- | --- |
 | `POST /api/sessions` | Admin creates a session. Returns `sessionId`, `sessionCode`, `joinQrPayload`, `adminToken`. |
-| `POST /api/sessions/join` | Player submits `sessionCode` (from QR or typed). Returns a session-scoped `accessToken` with role `pending`. |
+| `POST /api/sessions/join` | Player submits `sessionCode` (from QR or typed). Returns `sessionId` and a session-scoped `accessToken` with role `pending`. |
+| `POST /api/sessions/{sessionId}/device-link` | Submit `{ "markerId": 12 }` with the pending bearer token. Returns the player identity and upgraded token. |
+
+The server checks that the token belongs to the session in the URL. Missing or invalid credentials return 401 and a session mismatch returns 403. An admin who also plays can link their own registered marker using the same endpoint and retain the admin role. The admin reconnects with the upgraded token to play.
+
+**Device-link validation and response**
+
+Checks: the session exists, the marker is registered to a player in this session with role `chest` or `back`, and that player is not already linked to another active device.
+
+Result:
+
+```json
+{
+  "success": true,
+  "playerId": "player_123",
+  "nickname": "Player123",
+  "teamId": "blue",
+  "upgradedToken": "<jwt>"
+}
+```
+
+REST failures use ProblemDetails with a stable `code` extension. Unknown markers and sessions return 404 (`MARKER_NOT_REGISTERED`, `SESSION_NOT_FOUND`). A spawn marker returns 400 (`MARKER_IS_SPAWN_POINT`). An existing device link returns 409 (`PLAYER_ALREADY_LINKED`).
+
+> **Decision:** if a player is already linked, the call is rejected rather than silently replacing the existing device. An admin can release a link by calling `UpdatePlayer` with `releaseDevice: true`. This avoids a copied marker hijacking a player's session.
 
 ### 3.2 Token
 
@@ -48,9 +78,7 @@ The access token is a JWT containing:
 | `sessionId` | Game session the token is valid for |
 | `role` | `admin`, `player` or `pending` |
 
-Browsers and many clients cannot set headers on WebSocket connections, so the Unity client passes the token as `?access_token=…` on the hub URL. The server reads it for `/hubs/game` only.
-
-After a successful `LinkDevice` the server returns an upgraded token (role `player`, `sub = playerId`). The client must reconnect with it so the user identifier matches the player.
+Supply the token through the SignalR client's access-token provider. If the transport requires a query token, the server accepts it only on `/hubs/game`.
 
 ### 3.3 Server-side identity and groups
 
@@ -58,7 +86,7 @@ The shooter is **always derived from the authenticated connection**, never from 
 
 | Group | Members | Used for |
 | --- | --- | --- |
-| `session:{sessionId}` | all connections | game-wide events |
+| `session:{sessionId}` | authenticated admin and player connections | game-wide events |
 | `team:{sessionId}:{teamId}` | players of that team | team-only events |
 | `admins:{sessionId}` | admin connections | admin notifications |
 
@@ -66,12 +94,11 @@ Direct messages to one player use `Clients.User(playerId)`. Because groups are l
 
 ### 3.4 Connection lifecycle
 
-1. Client calls `POST /api/sessions/join` and gets a `pending` token.
-2. Client connects to `/hubs/game` with the token.
-3. Client calls `LinkDevice(markerId)`, then reconnects with the upgraded token.
-4. Client calls `GetMappingTable()`, `GetGameConfig()` and `GetGameState()`.
-5. Game runs; client calls `Fire(...)` and handles callbacks.
-6. On start-up and after every reconnect, the client calls `GetGameState()` to resynchronize.
+1. The admin creates the session over REST and connects to `/hubs/game` with the admin token to register players.
+2. A joining player submits the session code over REST, then exchanges their pending token and scanned marker for a player token through the device-link endpoint.
+3. The client registers callback handlers before connecting with its admin or player token. Pending credentials authorize only device linking.
+4. On connection, call `GetGameState()` for the current configuration and player state. Call `GetMappingTable()` if the local mapping is missing or its version differs.
+5. Apply lobby and match callbacks as they arrive. Repeat step 4 after each reconnect.
 
 ---
 
@@ -93,14 +120,12 @@ public interface IGameClient
 
 public class GameHub : Hub<IGameClient>
 {
-    // Any authenticated user
-    Task<LinkDeviceResult> LinkDevice(int markerId);
+    // Connected admin or player
     Task<MappingTable>     GetMappingTable();
-    Task<GameConfig>       GetGameConfig();
     Task<GameStateSnapshot> GetGameState();
     Task<ServerTime>       GetServerTime();
 
-    // Players
+    // Linked players, including a linked admin
     Task<ShotResult>       Fire(ShotRequest request);
     Task<ConfirmSpawnResult> ConfirmSpawn(int spawnMarkerId);   // optional, Section 8.3
 
@@ -124,13 +149,11 @@ public class GameHub : Hub<IGameClient>
 
 | Method | Role | Returns | Purpose |
 | --- | --- | --- | --- |
-| `LinkDevice` | pending, player | `LinkDeviceResult` | Bind this device to a registered player by scanning one of their markers |
-| `GetMappingTable` | any | `MappingTable` | Marker → player/spawn lookup, downloaded at game start |
-| `GetGameConfig` | any | `GameConfig` | Current configuration |
-| `GetGameState` | any | `GameStateSnapshot` | Full resync snapshot |
-| `GetServerTime` | any | `ServerTime` | Clock offset estimation |
-| `Fire` | player | `ShotResult` | Report a hit on one or more enemy players |
-| `ConfirmSpawn` | player | `ConfirmSpawnResult` | Optional spawn point verification |
+| `GetMappingTable` | admin, player | `MappingTable` | Marker → player/spawn lookup, downloaded at game start |
+| `GetGameState` | admin, player | `GameStateSnapshot` | Full resync snapshot |
+| `GetServerTime` | admin, player | `ServerTime` | Clock offset estimation |
+| `Fire` | linked player or linked admin | `ShotResult` | Report a hit on one or more enemy players |
+| `ConfirmSpawn` | linked player or linked admin | `ConfirmSpawnResult` | Optional spawn point verification |
 | `RegisterPlayer` | admin | `PlayerRegistration` | Create a player from two scanned markers |
 | `UpdatePlayer` | admin | – | Change nickname or team |
 | `RemovePlayer` | admin | – | Remove a player and free their markers |
@@ -140,29 +163,7 @@ public class GameHub : Hub<IGameClient>
 | `StartGame` | admin | – | Lobby → running |
 | `EndGame` | admin | – | Running → ended |
 
-### 5.2 `LinkDevice(markerId)`
-
-Used after joining, when the player scans one of their own markers with the front camera.
-
-Checks: the session exists, the marker is registered to a player in this session with role `chest` or `back`, and that player is not already linked to another active device.
-
-Result:
-
-```json
-{
-  "success": true,
-  "playerId": "player_123",
-  "nickname": "Player123",
-  "teamId": "blue",
-  "upgradedToken": "<jwt>"
-}
-```
-
-Failure codes: `MARKER_NOT_REGISTERED`, `MARKER_IS_SPAWN_POINT`, `PLAYER_ALREADY_LINKED`, `SESSION_NOT_FOUND`.
-
-> **Decision:** if a player is already linked, the call is rejected rather than silently replacing the existing device. An admin can release a link by calling `UpdatePlayer` with `releaseDevice: true`. This avoids a copied marker hijacking a player's session.
-
-### 5.3 `GetMappingTable()`
+### 5.2 `GetMappingTable()`
 
 Returns everything the client needs to identify players and spawn points locally, so that marker detections never need to be sent to the server.
 
@@ -184,7 +185,7 @@ Returns everything the client needs to identify players and spawn points locally
 
 `kind: "spawn"` entries tell the client to exclude those markers from targeting. `version` increases on every change; the client keeps the highest version it has seen.
 
-### 5.4 `GetGameState()`
+### 5.3 `GetGameState()`
 
 Returns the full snapshot used at start-up and after reconnecting:
 
@@ -204,11 +205,11 @@ Returns the full snapshot used at start-up and after reconnecting:
 
 Which entries appear in `players` is limited by the elimination visibility setting (Section 7.1).
 
-### 5.5 `GetServerTime()`
+### 5.4 `GetServerTime()`
 
 Returns `{ "serverTime": "…" }`. The client measures round-trip time, estimates its clock offset, and uses it to render respawn countdowns correctly. The client's own clock is never used to decide whether a respawn has finished.
 
-### 5.6 `Fire(ShotRequest)`
+### 5.5 `Fire(ShotRequest)`
 
 The core gameplay call. It is sent only when the client has found a valid enemy target (a shot with no valid target is a local miss and is **not** sent).
 
@@ -258,11 +259,11 @@ The shooter is not part of the request; it comes from the connection.
 - A repeated `shotId` from the same shooter changes no state and returns the **original stored result** with `duplicate: true`. This makes retries after a network drop safe.
 - If the whole request is invalid (shooter dead, session inactive, malformed), `accepted` is `false` and `shotRejectedReason` is set at the top level instead of per-target reasons.
 
-### 5.7 `ConfirmSpawn(spawnMarkerId)`
+### 5.6 `ConfirmSpawn(spawnMarkerId)`
 
 Optional, enabled by `requireSpawnConfirmation` in the configuration (Section 8.3). The client sends the ID of the spawn marker it has just detected. Result: `{ "confirmed": true, "state": "alive" }` or a failure code (`NOT_A_SPAWN_MARKER`, `WRONG_TEAM_SPAWN`, `RESPAWN_NOT_READY`).
 
-### 5.8 Admin methods
+### 5.7 Admin methods
 
 **`RegisterPlayer`**
 
@@ -391,7 +392,7 @@ The proposal says crosshair size is configurable but does not define its unit. A
 
 ### 7.3 Other types
 
-`ServerTime` is `{ "serverTime": "…" }`. `PlayerRegistration`, `SpawnPoint`, `LinkDeviceResult` and `ConfirmSpawnResult` are shown inline in Section 5.
+`ServerTime` is `{ "serverTime": "…" }`. `PlayerRegistration`, `SpawnPoint` and `ConfirmSpawnResult` are shown inline in Section 5.
 
 ---
 
@@ -443,7 +444,7 @@ Timers must survive restarts and multiple server instances, so `respawnAt` is st
 
 ## 9. Errors
 
-Two kinds of failure exist:
+REST errors use HTTP status codes and ProblemDetails (Section 3.1). Hub invocations have two failure modes:
 
 1. **Protocol or authorization errors** throw a `HubException` with a stable code as its message. Examples: not authenticated, wrong role, malformed arguments.
 2. **Business outcomes** (for example, a rejected hit) are returned in the result object and never thrown.
@@ -465,9 +466,6 @@ Two kinds of failure exist:
 | `SAME_TEAM` | `Fire` (per target) | Friendly fire |
 | `MARKER_MISMATCH` | `Fire` (per target) | Marker not registered to that player |
 | `TARGET_NOT_ALIVE` | `Fire` (per target) | Already eliminated, respawning or protected |
-| `MARKER_NOT_REGISTERED` | `LinkDevice` | Unknown marker |
-| `MARKER_IS_SPAWN_POINT` | `LinkDevice` | Marker belongs to a spawn point |
-| `PLAYER_ALREADY_LINKED` | `LinkDevice` | Player already has a device |
 | `MARKER_IN_USE` | `RegisterPlayer`, `RegisterSpawnPoint` | Marker already registered |
 | `NICKNAME_TAKEN` | `RegisterPlayer`, `UpdatePlayer` | Duplicate nickname |
 | `NOT_A_SPAWN_MARKER` | `ConfirmSpawn` | Marker is not a spawn point |
@@ -484,7 +482,6 @@ Two kinds of failure exist:
 - A `Fire` that failed because of a dropped connection may be retried with the **same `shotId`**. The server deduplicates, so there is no double elimination.
 - Because `fireWindowMs` is short (hundreds of milliseconds), a shot taken while offline is not queued; the client shows a connection warning and does not fire locally.
 - Players who stay disconnected keep their state; a player who is `respawning` still respawns on schedule.
-- Optionally, the server can send `Kicked` and close the connection when a second device attempts to take over a linked player (see `LinkDevice`).
 
 ---
 
