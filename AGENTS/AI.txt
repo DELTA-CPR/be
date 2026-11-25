@@ -1,4 +1,1 @@
-- Každej hráč má jeden přiřazenej unique marker, ne 2 jiný pro front and back
-- Oziveni pujde nastavit adminem. Budou moznosti oziveni z qr codu a oziveni po case
-- friendly fire pujde vypnout a zapnout adminem
--
+
