@@ -1,6 +1,20 @@
 @Be_HostAddress = http://localhost:5165
 
-GET {{Be_HostAddress}}/weatherforecast/
-Accept: application/json
+### Create a session (returns adminToken and sessionCode)
+POST {{Be_HostAddress}}/api/sessions
+Content-Type: application/json
 
-###
+{}
+
+### Join by code (returns a pending accessToken)
+POST {{Be_HostAddress}}/api/sessions/join
+Content-Type: application/json
+
+{ "sessionCode": "ABC234" }
+
+### Link this device to the player owning the scanned marker
+POST {{Be_HostAddress}}/api/sessions/game_0000000000000000/device-link
+Content-Type: application/json
+Authorization: Bearer <pending-or-admin-token>
+
+{ "markerId": 12 }
